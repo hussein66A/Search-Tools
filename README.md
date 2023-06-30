@@ -1,4 +1,4 @@
-<h1 align="center">pentest-tools</h1>
+<h1 align="center">Search-Tools</h1>
 
 <h4 align="center">A collection of custom security tools for quick needs.</h4>
 
@@ -11,9 +11,9 @@
 </p>
 
 <!-- <p align="center">
-    <img src="https://img.shields.io/github/stars/gwen001/pentest-tools?style=social" alt="github stars badge">
-    <img src="https://img.shields.io/github/watchers/gwen001/pentest-tools?style=social" alt="github watchers badge">
-    <img src="https://img.shields.io/github/forks/gwen001/pentest-tools?style=social" alt="github forks badge">
+    <img src="https://img.shields.io/github/stars/hussein66A/Search-Tools?style=social" alt="github stars badge">
+    <img src="https://img.shields.io/github/watchers/hussein66A/Search-Tools?style=social" alt="github watchers badge">
+    <img src="https://img.shields.io/github/forks/hussein66A/Search-Tools?style=social" alt="github forks badge">
 </p> -->
 
 ---
@@ -39,8 +39,8 @@ Some useless/not working scripts have been archived and some others have been mo
 ## Install
 
 ```
-git clone https://github.com/gwen001/pentest-tools
-cd pentest-tools
+git clone https://github.com/hussein66A/Search-Tools
+cd Search-Tools
 pip3 install -r requirements.txt
 ```
 
