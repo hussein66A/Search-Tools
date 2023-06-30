@@ -20,9 +20,9 @@
 
 ## Important note
 
-‼ A big clean occured in 2022-11 ‼  
+‼ Update merage in 2023-7 ‼  
 
-Some useless/not working scripts have been archived and some others have been moved to their own repository to get more visibility, feel free to check them:
+Some scripts have been archived and some others have been updated:
 - [apk-analyzer](https://github.com/gwen001/apk-analyzer)
 - [cloudflare-origin-ip](https://github.com/gwen001/cloudflare-origin-ip)
 - [csp-analyzer](https://github.com/gwen001/csp-analyzer)
