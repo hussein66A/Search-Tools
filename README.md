@@ -88,17 +88,26 @@ Performs all types of DNS requests for a given (sub)domain.
 ## extract-domains.py
 Extracts domain of a given URL or a list of URLs.
 
+## extract-endpoints.php
+A script that try to extract endpoints from Javascript files, thanks to ZSeano
+
 ## extract_links.php
 Extracts links from a given HTML file.
 
 ## filterurls.py
 Classifies and displays URLs by vulnerability types.
 
+## finddl.sh
+???
+
 ## flash-regexp.sh
 Performs regexps listed in `flash-regexp.txt` for Flash apps testing purpose.
 
 ## gdorks.php
 Generates Google dorks for a given domain (searches are not performed).
+
+## gg-extract-links.php
+???
 
 ## hashall.php
 Uses about 40 algorithms to hash a given string.
@@ -181,6 +190,12 @@ Tries to guess SSH users using timing attack.
 ## ssrf-generate-ip.php
 Generate random IP address:port inside private network range for SSRF scans.
 
+## subdomains_finder.sh
+A script that find subdomains using other well known programs (TheHarvester, DNSrecon...)
+
+## subthreat.php
+A script that grab subdomains of a given domain from https://www.threatcrowd.org
+
 ## subalt.py
 Generates subdomains alterations and permutations.
 
@@ -190,11 +205,17 @@ Brute force a wordlist on IPs range and ports list.
 ## testhttp.php
 Tries to determine if an url (subdomain+port) is a web thing.
 
+## testhttp2.php
+Same same but different.
+
 ## testnc.sh
 Performs fuzzing on a given IP address+port using `netcat`.
 
 ## Utils.php
 Just few common PHP functions.
+
+## wayback-analyzer.php
+A script that try to nicely display waybackurls.py output.
 
 ## webdav-bruteforce.sh
 Perform brute force on a given url that use `WebDav` using [Davtest](https://github.com/cldrn/davtest).
