@@ -1,4 +1,7 @@
-#!/usr/bin/python3
+#!/usr/bin/python3.5
+
+# I don't believe in license.
+# You can do whatever you want with this program.
 
 import os
 import sys
@@ -8,23 +11,6 @@ from colored import fg, bg, attr
 from threading import Thread
 from queue import Queue
 from multiprocessing.dummy import Pool
-
-
-def banner():
-	print("""
-                                   _
-               _ __ ___  ___  ___ | |_   _____       _ __  _   _
-              | '__/ _ \/ __|/ _ \| \ \ / / _ \     | '_ \| | | |
-              | | |  __/\__ \ (_) | |\ V /  __/  _  | |_) | |_| |
-              |_|  \___||___/\___/|_| \_/ \___| (_) | .__/ \__, |
-                                                    |_|    |___/
-
-                                by @gwendallecoguic
-
-""")
-	pass
-
-banner()
 
 
 parser = argparse.ArgumentParser()
@@ -62,10 +48,10 @@ def resolve( host, store_ip ):
     host = host.strip()
     if not len(host):
         return
-
+    
     if t_multiproc['n_current']%5000 == 0:
         save( store_ip )
-
+    
     sys.stdout.write( 'progress: %d/%d\r' %  (t_multiproc['n_current'],t_multiproc['n_total']) )
     t_multiproc['n_current'] = t_multiproc['n_current'] + 1
 
@@ -130,8 +116,8 @@ except KeyboardInterrupt:
 # print( t_alive)
 # print( t_dead)
 sys.stdout.write( '%s[+] %d hosts alive, %d dead hosts%s\n' % (fg('green'),len(t_alive),len(t_dead),attr(0)) )
-sys.stdout.write( '%s[+] Output files hosts_alive and hosts_dead created%s\n' % (fg('green'),attr(0)) )
 
 save( _store_ip )
+
 
 exit()

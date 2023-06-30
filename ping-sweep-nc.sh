@@ -23,8 +23,7 @@ else
 fi
 
 for i in $(seq $start $end); do
-    # for linux
-    nc -n -v -z -w 1 $ip"."$i $port 2>&1 | egrep "open|succeeded"
-    # for macos
-    # nc -n -v -z -w 1 -G 1 $ip"."$i $port 2>&1 | egrep "open|succeeded"
+  nc -n -v -z -w 1 $ip"."$i $port 2>&1 |grep open
 done
+
+exit

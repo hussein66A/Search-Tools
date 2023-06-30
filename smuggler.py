@@ -1,4 +1,7 @@
-#!/usr/bin/python3
+#!/usr/bin/python3.5
+
+# I don't believe in license.
+# You can do whatever you want with this program.
 
 # Based on the awesome James Kettle research
 # https://twitter.com/albinowax
@@ -19,28 +22,11 @@ from queue import Queue
 from colored import fg, bg, attr
 
 MAX_EXCEPTION = 10
-MAX_VULNERABLE = 3
+MAX_VULNERABLE = 5
 
 # disable "InsecureRequestWarning: Unverified HTTPS request is being made."
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-
-
-def banner():
-	print("""
-                                         _
-         ___ _ __ ___  _   _  __ _  __ _| | ___ _ __       _ __  _   _
-        / __| '_ ` _ \| | | |/ _` |/ _` | |/ _ \ '__|     | '_ \| | | |
-        \__ \ | | | | | |_| | (_| | (_| | |  __/ |     _  | |_) | |_| |
-        |___/_| |_| |_|\__,_|\__, |\__, |_|\___|_|    (_) | .__/ \__, |
-                             |___/ |___/                  |_|    |___/
-
-                        by @gwendallecoguic
-
-""")
-	pass
-
-banner()
 
 
 CRLF = '\r\n'
@@ -72,7 +58,7 @@ t_registered_method = [
     # 'tabprefix1',
     # 'vertprefix1',
 
-    'vanilla',
+    # 'vanilla',
     'dualchunk',
     'badwrap',
     'space1',
@@ -96,9 +82,6 @@ t_registered_method = [
     'badsetupCR',
     'vertwrap',
     'tabwrap',
-
-    # new techniques for BHEU
-    # 'chunky',
 
     # new techniques for AppSec
     'lazygrep',
@@ -144,10 +127,6 @@ t_registered_method = [
     'suffix1_127',
     'suffix1_160',
     'suffix1_255',
-
-    # https://twitter.com/mame82/status/1265903964568145921
-    'marcusmengs1',
-    'marcusmengs2',
 ]
 # t_registered_method = [
 #     'contentEnc',
@@ -157,18 +136,10 @@ class attackMethod:
     def update_content_length( self, msg, cl ):
         return msg.replace( 'Content-Length: 0', 'Content-Length: '+str(cl) )
 
-    def marcusmengs1( self, msg ):
-        msg = msg.replace( 'Transfer-Encoding', chr(1)+'Transfer_Encoding' )
-        return msg
-
-    def marcusmengs2( self, msg ):
-        msg = msg.replace( 'Transfer-Encoding', chr(15)+'Transfer_Encoding' )
-        return msg
-
     def underjoin1( self, msg ):
         msg = msg.replace( 'Transfer-Encoding', 'Transfer_Encoding' )
         return msg
-
+    
     def underscore2( self, msg ):
         msg = msg.replace( 'Content-Length', 'Content_Length' )
         return msg
@@ -176,11 +147,11 @@ class attackMethod:
     def spacejoin1( self, msg ):
         msg = msg.replace( 'Transfer-Encoding', 'Transfer Encoding' )
         return msg
-
+    
     def space1( self, msg ):
         msg = msg.replace( 'Transfer-Encoding', 'Transfer-Encoding ' )
         return msg
-
+    
     def space2( self, msg ):
         msg = msg.replace( 'Content-Length', 'Content-Length ' )
         return msg
@@ -206,11 +177,11 @@ class attackMethod:
         return msg
 
     def commaCow( self, msg ):
-        msg = msg.replace( 'Transfer-Encoding: chunked', 'Transfer-Encoding: chunked, identity' )
+        msg = msg.replace( 'Transfer-Encoding: chunked', 'Transfer-Encoding: chunked, cow' )
         return msg
 
     def cowComma( self, msg ):
-        msg = msg.replace( 'Transfer-Encoding: ', 'Transfer-Encoding: identity, ' )
+        msg = msg.replace( 'Transfer-Encoding: ', 'Transfer-Encoding: cow, ' )
         return msg
 
     def contentEnc( self, msg ):
@@ -257,7 +228,7 @@ class attackMethod:
         return msg
 
     def dualchunk( self, msg ):
-        msg = msg.replace( 'Transfer-Encoding: chunked', 'Transfer-Encoding: chunked\r\nTransfer-Encoding: identity' )
+        msg = msg.replace( 'Transfer-Encoding: chunked', 'Transfer-Encoding: chunked\r\nTransfer-Encoding: cow' )
         return msg
 
     def lazygrep( self, msg ):
@@ -286,7 +257,7 @@ class attackMethod:
         return msg
 
     def revdualchunk( self, msg ):
-        msg = msg.replace( 'Transfer-Encoding: chunked', 'Transfer-Encoding: identity\r\nTransfer-Encoding: chunked' )
+        msg = msg.replace( 'Transfer-Encoding: chunked', 'Transfer-Encoding: cow\r\nTransfer-Encoding: chunked' )
         return msg
 
     def zdspam( self, msg ):
@@ -319,19 +290,6 @@ class attackMethod:
 
     def accentCH( self, msg ):
         msg = msg.replace( 'Transfer-Encoding: chunked', 'Transfr-Encoding: ch'+chr(150)+'nked' )
-        return msg
-
-    # concept by @webtonull
-    def chunky( self, msg ):
-        pad_str = ''
-        pad_chunk = "F\r\nAAAAAAAAAAAAAAA\r\n"
-        for i in range(0,3000):
-            pad_str = pad_str + pad_chunk
-        msg = msg.replace( 'Transfer-Encoding: chunked\r\n\r\n', 'Transfer-Encoding: chunked\r\n\r\n'+pad_str )
-        if 'Content-Length: 11' in msg:
-            msg = msg.replace( 'Content-Length: ', 'Content-Length: 600' )
-        else:
-            msg = msg.replace( 'Content-Length: ', 'Content-Length: 6000' )
         return msg
 
     def vanilla( self, msg ):
@@ -436,7 +394,7 @@ class sockRequest:
     def __init__( self, url, message ):
         self.url = url
         self.message = message
-
+    
 
     def receive_all( self, sock ):
         datas = ''
@@ -454,7 +412,7 @@ class sockRequest:
 
 
     def extractDatas( self ):
-        try:
+        try: 
             self.length = len( self.response )
             p = self.response.find( CRLF+CRLF )
             self.headers = self.response[0:p]
@@ -463,7 +421,7 @@ class sockRequest:
             self.content_length = len( self.content )
 
             tmp = self.headers.split( CRLF )
-
+            
             first_line = tmp[0].split( ' ' )
             self.status_code = int(first_line[1])
             self.status_reason = first_line[2]
@@ -473,9 +431,9 @@ class sockRequest:
                 k = header[0:p]
                 v = header[p+2:]
                 self.t_headers[ k ] = v
-        except Exception as e:
-            sys.stdout.write( "%s[-] extractDatas - error occurred: %s%s\n" % (fg('red'),e,attr(0)) )
-
+        except Exception as e: 
+            sys.stdout.write( "%s[-] extractDatas - error occurred: %s \n" % (fg('red'), e))
+    
 
     def send( self ):
         t_urlparse = urlparse( self.url )
@@ -487,14 +445,9 @@ class sockRequest:
         else:
             port = 80
 
-        # not supposed to happen but thanks to AlessandroZ
-        # https://github.com/gwen001/pentest-tools/pull/3
-        if ':' in t_urlparse.netloc:
-            tmp = t_urlparse.netloc.split(':')
-            netloc = tmp[0]
-            port = tmp[1]
-        else:
-            netloc = t_urlparse.netloc
+        netloc = t_urlparse.netloc
+        if ':%s' % port in netloc: 
+            netloc = netloc.replace(':%s' % port, '')
 
         # print( t_urlparse )
         # print( self.url )
@@ -511,28 +464,22 @@ class sockRequest:
         sock.settimeout( _timeout )
 
         try:
-            sock.connect( (netloc, int(port)) )
+            sock.connect( (netloc, port) )
         except Exception as e:
-            sys.stdout.write( "%s[-] send (connect) - error occurred: %s (%s)%s\n" % (fg('red'),e,self.url,attr(0)) )
+            sys.stdout.write( "%s[-] error occurred: %s (%s)%s\n" % (fg('red'), e, self.url, attr(0)) )
             return False
-
+        
         sock.sendall( str.encode(self.message) )
         start = time.time()
 
         try:
             datas = self.receive_all( sock )
         except Exception as e:
-            sys.stdout.write( "%s[-] send (receive) - error occurred: %s (%s)%s\n" % (fg('red'),e,self.url,attr(0)) )
+            sys.stdout.write( "%s[-] error occurred: %s (%s)%s\n" % (fg('red'), e, self.url, attr(0)) )
             return False
-
+        
         end = time.time()
-
-        try:
-            sock.shutdown( socket.SHUT_RDWR )
-        except Exception as e:
-            sys.stdout.write( "%s[-] send (shutdown) - error occurred: %s (%s)%s\n" % (fg('red'),e,self.url,attr(0)) )
-            return False
-
+        sock.shutdown( socket.SHUT_RDWR )
         sock.close()
 
         self.response = datas
@@ -551,10 +498,8 @@ def generateAttackMessage( base_message, method, attack_datas ):
     msg = base_message.strip() + CRLF
     msg = am.update_content_length( msg, attack_datas['Content-Length'] )
     msg = msg + 'Transfer-Encoding: chunked' + CRLF
-    msg = msg + CRLF + attack_datas['body']
-
-    # apply methods variation
     msg = f( msg )
+    msg = msg + CRLF + attack_datas['body']
 
     return msg
 
@@ -603,11 +548,11 @@ def testURL( url ):
     base_message = generateBaseMessage( url, t_base_headers )
 
     # reference request (we don't care)
-    r = doRequest( url, base_message )
-    if r.status_code < 0:
-        t_exceptions[url] = t_exceptions[url] + 1
-    else:
-        printResult( r, 'ref', '', '' )
+    # r = doRequest( url, base_message )
+    # if r.status_code < 0:
+    #     t_exceptions[url] = t_exceptions[url] + 1
+    # else:
+    #     printResult( r, 'ref', '', '' )
 
     for method in t_methods:
         for attack_datas in t_attacks_datas:
@@ -677,14 +622,14 @@ def printResult( r, r_type, method, attack_datas ):
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument( "-a","--path",help="set paths list" )
 parser.add_argument( "-d","--header",help="custom headers", action="append" )
-parser.add_argument( "-i","--timeout",help="set timeout, default 10" )
-parser.add_argument( "-m","--method",help="set methods separated by comma, default: all" )
+parser.add_argument( "-a","--path",help="set paths list" )
 parser.add_argument( "-o","--hosts",help="set host list (required or -u)" )
 parser.add_argument( "-s","--scheme",help="scheme to use, default: http,https" )
 parser.add_argument( "-t","--threads",help="threads, default 10" )
+parser.add_argument( "-m","--method",help="set methods separated by comma, default: all" )
 parser.add_argument( "-u","--urls",help="set url list (required or -o)" )
+parser.add_argument( "-i","--timeout",help="set timeout, default 10" )
 parser.add_argument( "-v","--verbose",help="display output, 0=nothing, 1=only vulnerable, 2=all requests, 3=requests+headers, 4=full debug, default: 1" )
 parser.parse_args()
 args = parser.parse_args()
@@ -709,10 +654,9 @@ if args.header:
     for header in args.header:
         if ':' in header:
             tmp = header.split(':')
-            t_custom_headers[ tmp[0].strip() ] = ':'.join(tmp[1:]).strip()
-t_base_headers.update( t_custom_headers )
-# print(t_base_headers)
-# exit()
+            t_custom_headers[ tmp[0].strip() ] = tmp[1].strip()
+
+t_base_headers.update(t_custom_headers)
 
 t_hosts = []
 if args.hosts:
@@ -753,7 +697,7 @@ sys.stdout.write( '%s[+] %d path found: %s%s\n' % (fg('green'),n_path,args.path,
 if args.verbose:
     _verbose = int(args.verbose)
 else:
-    _verbose = 1
+    _verbose = 2
 
 if args.threads:
     _threads = int(args.threads)

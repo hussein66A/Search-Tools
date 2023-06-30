@@ -16,10 +16,7 @@ fi
 ip=$1
 start=$2
 end=$3
-# linux
 options="-n -v -z -w 1"
-# macos
-options="-n -v -z -w 1 -G 1"
 
 if [ $# -eq 4 ] ; then
     options=$options" -u"
@@ -46,7 +43,7 @@ for port in $(seq $start $end); do
 	    if [ $test_found -ge $test_rate ] ; then
 	    	echo "Too much success, exiting!"
 	    	exit
-	    fi
+	    fi 
     else
     	nc $options $ip $port 2>&1 | egrep "\) open|\] succeeded" &
     fi

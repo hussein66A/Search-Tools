@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * I don't believe in license
+ * You can do want you want with this program
+ * - gwen -
+ */
+
 class Utils
 {
 	const TMP_DIR = '/tmp/';
@@ -88,8 +94,8 @@ class Utils
 
 		return false;
 	}
-
-
+	
+	
 	public static function isDomain( $str )
 	{
 		$str = strtolower( $str );
@@ -113,7 +119,7 @@ class Utils
 		}
 	}
 
-
+	
 	public static function extractDomain( $host )
 	{
 		$tmp = explode( '.', $host );
@@ -130,22 +136,22 @@ class Utils
 
 		return $domain;
 	}
-
-
+	
+	
 	public static function cleanOutput( $str )
 	{
 		$str = preg_replace( '#\[[0-9;]{1,4}m#', '', $str );
 
 		return $str;
 	}
-
+	
 
 	public static function _exec( $cmd )
 	{
 		$output = '';
-
+	
 		while( @ob_end_flush() );
-
+		
 		$proc = popen( $cmd, 'r' );
 		while( !feof($proc) ) {
 			$line = fread( $proc, 4096 );
@@ -153,7 +159,7 @@ class Utils
 			$output .= $line;
 			@flush();
 		}
-
+		
 		return $output;
 	}
 }

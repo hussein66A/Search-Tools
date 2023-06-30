@@ -1,4 +1,7 @@
-#!/usr/bin/python3
+#!/usr/bin/python3.5
+
+# I don't believe in license.
+# You can do whatever you want with this program.
 
 import os
 import sys
@@ -18,27 +21,8 @@ from multiprocessing.dummy import Pool
 from lockfile import LockFile
 
 
-
-def banner():
-	print("""
-                       _      _    _     _ _
-            __ _ _   _(_) ___| | _| |__ (_) |_ ___       _ __  _   _
-           / _` | | | | |/ __| |/ / '_ \| | __/ __|     | '_ \| | | |
-          | (_| | |_| | | (__|   <| | | | | |_\__ \  _  | |_) | |_| |
-           \__, |\__,_|_|\___|_|\_\_| |_|_|\__|___/ (_) | .__/ \__, |
-              |_|                                       |_|    |___/
-
-                                by @gwendallecoguic
-
-""")
-	pass
-
-banner()
-
-
-
 startTime = datetime.now()
-title_regexp = re.compile('<title>(.*?)</title>', re.IGNORECASE|re.DOTALL)
+
 
 def testURL( url ):
     time.sleep( 0.3 )
@@ -47,7 +31,7 @@ def testURL( url ):
 
     if url in t_history and t_history[ url ] == 1:
         return
-
+    
     if (t_multiproc['n_current'] % 1000) == 0:
         if not lock.is_locked():
             try:
@@ -78,27 +62,15 @@ def testURL( url ):
         t_exceptions[u] = t_exceptions[u] + 1
         # sys.stdout.write( "%s[-] error occurred: %s%s\n" % (fg('red'),e,attr(0)) )
         return
-
+    
     t_history[ url ] = 1
 
     if 'Content-Type' in r.headers:
         content_type = r.headers['Content-Type']
     else:
         content_type = '-'
-
-    # if len(url) > 1:
-    #     url = url.strip('_')
-
-    match = title_regexp.search( r.text )
-    title = match.group(1).strip() if match else '-'
-
-    ljust = 100
-    while ljust < len(url):
-        ljust = ljust + 50
-    ljust = ljust + 2
-
-    output = '%sS=%d\t\tL=%d\t\tC=%s\t\tT=%s\n' %  (url.ljust(ljust),r.status_code,len(r.text),content_type,title)
-    # output = '%sS=%d\t\tL=%d\t\tC=%s\t\tT=%s\n' %  (url.ljust(t_multiproc['u_max_length']),r.status_code,len(r.text),content_type,title)
+    
+    output = '%sC=%d\t\tL=%d\t\tT=%s\n' %  (url.ljust(t_multiproc['u_max_length']),r.status_code,len(r.text),content_type)
     # sys.stdout.write( '%s' % output )
 
     fp = open( t_multiproc['f_output'], 'a+' )
@@ -107,43 +79,35 @@ def testURL( url ):
 
     if str(r.status_code) in t_codes:
         sys.stdout.write( '%s' % output )
-
+    
     if t_multiproc['_grabfiles']:
         saveFile( t_multiproc['d_output'], t_urlparse, r )
 
 
 def saveFile( d_output, t_urlparse, r ):
     # filename = t_urlparse.path.strip('/')
-    filename = t_urlparse.path.strip('/') + '_' + t_urlparse.query
+    filename = t_urlparse.path
     filename = re.sub( '[^0-9a-zA-Z_\-\.]', '_', filename )
-    # if len(filename) > 1:
-    #     filename = filename.strip('_')
-
     d_output = d_output +  '/' + t_urlparse.netloc
     f_output = d_output + '/' + filename
     # print(f_output)
-
+    
     if not os.path.isdir(d_output):
         try:
             os.makedirs( d_output )
         except Exception as e:
             sys.stdout.write( "%s[-] error occurred: %s%s\n" % (fg('red'),e,attr(0)) )
             return
-
+    
     s_headers = 'HTTP/1.1 ' + str(r.status_code) + ' ' + r.reason + "\n"
     for k,v in r.headers.items():
         s_headers = s_headers + k + ': ' + v + "\n"
 
     # print(s_headers)
     content = s_headers + "\n" + r.text
-
-    try:
-        fp = open( f_output, 'w' )
-        fp.write( content )
-        fp.close()
-    except Exception as e:
-        sys.stdout.write( "%s[-] error occurred: %s%s\n" % (fg('red'),e,attr(0)) )
-        return
+    fp = open( f_output, 'w' )
+    fp.write( content )
+    fp.close()
 
 
 # disable "InsecureRequestWarning: Unverified HTTPS request is being made."
@@ -282,7 +246,7 @@ else:
             l = len(u)
             if l > u_max_length:
                 u_max_length = l
-
+    
     for host in t_hosts:
         for file in t_files:
             u = 'https' if _https else 'http'
@@ -310,7 +274,7 @@ sys.stdout.write( '[+] testing...\n' )
 # exit()
 
 random.shuffle(t_totest)
-# random.shuffle(t_totest)
+random.shuffle(t_totest)
 
 t_exceptions = {}
 t_multiproc = {

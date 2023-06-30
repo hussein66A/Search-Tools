@@ -9,4 +9,3 @@ colored
 goop
 lockfile
 pythonwhois
-queuelib
