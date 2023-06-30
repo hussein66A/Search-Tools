@@ -1,7 +1,4 @@
-#!/usr/bin/python3.5
-
-# I don't believe in license.
-# You can do whatever you want with this program.
+#!/usr/bin/python3
 
 import os
 import sys
@@ -17,11 +14,29 @@ from urllib.parse import urlparse
 from colored import fg, bg, attr
 
 MAX_EXCEPTION = 3
-MAX_VULNERABLE = 5
+MAX_VULNERABLE = 3
 
 # disable "InsecureRequestWarning: Unverified HTTPS request is being made."
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
+
+
+def banner():
+	print("""
+                       ___ ___  _ __ ___       _ __  _   _
+                      / __/ _ \| '__/ __|     | '_ \| | | |
+                     | (_| (_) | |  \__ \  _  | |_) | |_| |
+                      \___\___/|_|  |___/ (_) | .__/ \__, |
+                                              |_|    |___/
+
+                                by @gwendallecoguic
+
+""")
+	pass
+
+banner()
+
 
 
 def generatePayloads( url ):
@@ -53,14 +68,14 @@ def testURL( url ):
 def testPayload( url, payload ):
     t_urlparse = urlparse(url)
     u = t_urlparse.scheme + '_' + t_urlparse.netloc
-    
+
     if not u in t_exceptions:
         t_exceptions[u] = 0
     if t_exceptions[u] >= MAX_EXCEPTION:
         if _verbose >= 3:
             print("skip too many exceptions %s" % t_urlparse.netloc)
         return
-    
+
     if not u in t_vulnerable:
         t_vulnerable[u] = 0
     if t_vulnerable[u] >= MAX_VULNERABLE:
@@ -78,12 +93,12 @@ def testPayload( url, payload ):
         if _verbose >= 3:
             sys.stdout.write( "%s[-] error occurred: %s%s\n" % (fg('red'),e,attr(0)) )
         return
-    
+
     if 'Content-Type' in r.headers:
         content_type = r.headers['Content-Type']
     else:
         content_type = '-'
-    
+
     vuln = '-'
     if 'Access-Control-Allow-Credentials' in r.headers and r.headers['Access-Control-Allow-Credentials'] == 'true':
             if 'Access-Control-Allow-Origin' in r.headers:
@@ -100,13 +115,16 @@ def testPayload( url, payload ):
     fp.close()
 
     if _verbose >= 2 or (_verbose >= 1 and vuln == 'VULNERABLE'):
-        sys.stdout.write( '%s' % output )
+        if vuln == 'VULNERABLE':
+            sys.stdout.write( '%s%s%s' % (fg('light_red'),output,attr(0)) )
+        else:
+            sys.stdout.write( output )
     if _verbose >= 3:
         sys.stdout.write( '%s%s%s\n' % (fg('dark_gray'),headers,attr(0)) )
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument( "-d","--header",help="custom headers", action="append" )
+parser.add_argument( "-d","--header",help="custom headers, example: cookie1=value1;cookie2=value2...", action="append" )
 parser.add_argument( "-a","--path",help="set paths list" )
 parser.add_argument( "-p","--payloads",help="set payloads list" )
 parser.add_argument( "-o","--hosts",help="set host list (required or -u)" )

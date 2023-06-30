@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# multithreaded host command
+
 if [ $# -lt 1 ] ; then
     input="hosts"
 else
@@ -14,10 +16,10 @@ else
 fi
 #echo $output
 
-parallel -j 10 "host " :::: $input | tee $output
+parallel -j 20 "host " :::: $input | tee -a $output
 exit;
 
-for h in $(cat $input) ; do
-    host $h | tee -a $output
-    echo "" | tee -a $output
-done
+# for h in $(cat $input) ; do
+#     host $h | tee -a $output
+#     echo "" | tee -a $output
+# done
