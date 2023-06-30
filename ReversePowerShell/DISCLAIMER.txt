@@ -1,0 +1,1 @@
+This ReversePowerShell module should ONLY be used for authorized testing and/or educational purposes. No Exceptions.
